@@ -16,6 +16,7 @@
 
 #pragma once
 
+#include <opencv2/core/types_c.h>
 class ExpMovingAverage {
 private:
         double alpha; // [0;1] less = more stable, more = less stable

@@ -225,7 +225,11 @@ image Yolo3DetectorNode::convert_ipl_to_image(const sensor_msgs::ImageConstPtr& 
     else
         final_mat = mat_image;
 
+    #if (CV_MAJOR_VERSION > 3)
+    ipl_image = cvIplImage(final_mat);
+    #else
     ipl_image = final_mat;
+    #endif
 
     unsigned char *data = (unsigned char *)ipl_image.imageData;
     int h = ipl_image.height;

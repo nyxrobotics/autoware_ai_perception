@@ -23,9 +23,10 @@
   customized for demo_with_webcam
  */
 
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc_c.h>
 #include <stdio.h>
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
 #include <math.h>
 #include <list>
 #include "utils.h"
@@ -510,8 +511,13 @@ static void process_image_common(IplImage *frame)
 
 #ifdef SHOW_DETAIL
   /* show middle line */
-  cvLine(temp_frame, cvPoint(frame_size.width/2, 0),
-         cvPoint(frame_size.width/2, frame_size.height), CV_RGB(255, 255, 0), 1);
+  #if (CV_MAJOR_VERSION > 3)
+    cvLine(temp_frame, cvPoint(frame_size.width/2, 0),
+           cvPoint(frame_size.width/2, frame_size.height), cvScalar(0, 255, 255, 0 ), 1);
+  #else
+    cvLine(temp_frame, cvPoint(frame_size.width/2, 0),
+           cvPoint(frame_size.width/2, frame_size.height), CV_RGB(255, 255, 0), 1);
+  #endif
 
   // cvShowImage("Gray", gray);
   // cvShowImage("Edges", edges);
@@ -541,9 +547,17 @@ static void process_image_common(IplImage *frame)
 static void lane_cannyhough_callback(const sensor_msgs::Image& image_source)
 {
   cv_bridge::CvImagePtr cv_image = cv_bridge::toCvCopy(image_source, sensor_msgs::image_encodings::BGR8);
+  #if (CV_MAJOR_VERSION > 3)
+  IplImage frame = cvIplImage(cv_image->image);
+  #else
   IplImage frame = cv_image->image;
+  #endif
   process_image_common(&frame);
+  #if (CV_MAJOR_VERSION > 3)
+  cv::waitKey(2);
+  #else
   cvWaitKey(2);
+  #endif
 }
 #endif
 
